@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <script>
+      function getData() {
+        const ticker = document.getElementById("ticker").value;
+        const apiKey = "your_alpha_vantage_api_key";
+        const url =
+          "https://www.alphavantage.co/query?function=TIME_SERIES_DAILY_ADJUSTED&symbol=" +
+          ticker +
+          "&apikey=" +
+          apiKey;
+
+        fetch(url)
+          .then((response) => response.json())
+          .then((data) => {
+            const dates = Object.keys(data["Time Series (Daily)"]);
+            const closingPrices = dates.map(
+              (date) => data["Time Series (Daily)"][date]["4. close"]
+            );
+
+            Plotly.newPlot("plot", [
+              {
+                x: dates,
+                y: closingPrices,
+                type: "line",
+              },
+            ]);
+          });
+      }
+    </script>
+  </head>
+  <body>
+    <input type="text" id="ticker" />
+    <button onclick="getData()">Get Data</button>
+    <div id="plot"></div>
+  </body>
+</html>
